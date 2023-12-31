@@ -1,0 +1,32 @@
+{
+  "name": "next-core",
+  "version": "0.1.0",
+  "description": "react",
+  "main": "./lib/index.js",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build:lib": "tsc",
+    "clean:lib": "rimraf lib"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.41",
+    "@types/react-router-dom": "^5.3.3",
+    "query-string": "^6.13.1",
+    "react": "^17.0.2",
+    "react-router-dom": "^6.2.2",
+    "tslint": "^5.10.0",
+    "typescript": "^3.3.3333"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com/core-ts/next"
+  },
+  "keywords": [
+    "react",
+    "next",
+    "next-core"
+  ]
+}

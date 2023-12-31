@@ -1,0 +1,29 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es5",
+    "baseUrl": "./src",
+    "outDir": "./lib",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "strictNullChecks": true,
+    "pretty": true,
+    "sourceMap": false,
+    "declaration": false,
+    "experimentalDecorators": false,
+    "removeComments": true,
+    "lib": [
+      "dom",
+      "es6",
+      "es7",
+      "es2017"
+    ]
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
