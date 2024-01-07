@@ -1,5 +1,5 @@
+import {useRouter, useParams} from 'next/navigation';
 import {useEffect, useState} from 'react';
-import {useRouter} from 'next/router';
 import {buildId, getModelName as getModelName2, hideLoading, initForm, LoadingService, Locale, message, messageByHttpStatus, ResourceService, showLoading, ViewParameter, ViewService} from './core';
 import {readOnly} from './formutil';
 import {DispatchWithCallback, useMergeState} from './merge';
@@ -45,12 +45,12 @@ export const useView = <T, ID, S>(
   ) => {
   const baseProps = useCoreView(refForm, initialState, service, p1, p);
   const [, setState] = useMergeState<S>(initialState);
-  const router = useRouter();
+  const params = useParams();
   useEffect(() => {
     if (baseProps.refForm) {
       initForm(baseProps.refForm.current);
     }
-    const id = buildId<ID>(router.query, p ? p.keys : undefined);
+    const id = buildId<ID>(params, p ? p.keys : undefined);
     if (id) {
       if (p && p.initialize) {
         p.initialize(id, baseProps.load, setState, p.callback);
