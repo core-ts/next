@@ -1,6 +1,6 @@
 {
   "name": "next-hook-core",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "react",
   "main": "./lib/index.js",
   "types": "./src/index.ts",
