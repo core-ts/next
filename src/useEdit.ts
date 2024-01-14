@@ -18,9 +18,9 @@ export interface BaseEditComponentParam<T, ID> {
   setBack?: boolean;
   patchable?: boolean;
 
-  addable?: boolean;
+  // addable?: boolean;
   readOnly?: boolean;
-  deletable?: boolean;
+  // deletable?: boolean;
 
   insertSuccessMsg?: string;
   updateSuccessMsg?: string;
@@ -168,7 +168,7 @@ export const useCoreEdit = <T, ID, S, P>(
     addable = true
   } = p; */
   const router = useRouter()
-  const addable = (p && p.patchable !== false ? true : undefined);
+  // const addable = (p && p.patchable !== false ? true : undefined);
   const back = (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (event) {
       event.preventDefault();
@@ -190,7 +190,7 @@ export const useCoreEdit = <T, ID, S, P>(
   const [flag, setFlag] = useMergeState({
     newMode: false,
     setBack: false,
-    addable,
+    // addable,
     readOnly: p ? p.readOnly : undefined,
     originalModel: undefined
   });
@@ -258,47 +258,37 @@ export const useCoreEdit = <T, ID, S, P>(
   };
 
   const _onSave = (isBack?: boolean) => {
-    if (flag.newMode === true && flag.addable === false) {
-      const m = message(p1.resource.value, 'error_permission_add', 'error_permission');
-      p1.showError(m.message, m.title);
+    if (running === true) {
       return;
-    } else if (p && flag.newMode === false && p.readOnly) {
-      const msg = message(p1.resource.value, 'error_permission_edit', 'error_permission');
-      p1.showError(msg.message, msg.title);
-      return;
+    }
+    const obj = getModel();
+    const metadata = (p && p.metadata ? p.metadata : (service.metadata ? service.metadata() : undefined));
+    let keys: string[]|undefined;
+    let version: string|undefined;
+    if (p && metadata && (!p.keys || !p.version)) {
+      const meta = build(metadata);
+      keys = (p.keys ? p.keys : (meta ? meta.keys : undefined));
+      version = (p.version ? p.version : (meta ? meta.version : undefined));
+    }
+    if (flag.newMode) {
+      validate(obj, () => {
+        const msg = message(p1.resource.value, 'msg_confirm_save', 'confirm', 'yes', 'no');
+        p1.confirm(msg.message, msg.title, () => {
+          doSave(obj, undefined, version, isBack);
+        }, msg.no, msg.yes);
+      });
     } else {
-      if (running === true) {
-        return;
-      }
-      const obj = getModel();
-      const metadata = (p && p.metadata ? p.metadata : (service.metadata ? service.metadata() : undefined));
-      let keys: string[]|undefined;
-      let version: string|undefined;
-      if (p && metadata && (!p.keys || !p.version)) {
-        const meta = build(metadata);
-        keys = (p.keys ? p.keys : (meta ? meta.keys : undefined));
-        version = (p.version ? p.version : (meta ? meta.version : undefined));
-      }
-      if (flag.newMode) {
+      const diffObj = makeDiff(initPropertyNullInModel(flag.originalModel, metadata), obj, keys, version);
+      const objKeys = Object.keys(diffObj);
+      if (objKeys.length === 0) {
+        p1.showMessage(p1.resource.value('msg_no_change'));
+      } else {
         validate(obj, () => {
           const msg = message(p1.resource.value, 'msg_confirm_save', 'confirm', 'yes', 'no');
           p1.confirm(msg.message, msg.title, () => {
-            doSave(obj, undefined, version, isBack);
+            doSave(obj, diffObj as any, version, isBack);
           }, msg.no, msg.yes);
         });
-      } else {
-        const diffObj = makeDiff(initPropertyNullInModel(flag.originalModel, metadata), obj, keys, version);
-        const objKeys = Object.keys(diffObj);
-        if (objKeys.length === 0) {
-          p1.showMessage(p1.resource.value('msg_no_change'));
-        } else {
-          validate(obj, () => {
-            const msg = message(p1.resource.value, 'msg_confirm_save', 'confirm', 'yes', 'no');
-            p1.confirm(msg.message, msg.title, () => {
-              doSave(obj, diffObj as any, version, isBack);
-            }, msg.no, msg.yes);
-          });
-        }
       }
     }
   };
