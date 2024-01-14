@@ -1,7 +1,7 @@
 import {useRouter, useParams} from 'next/navigation';
 import {useEffect, useState} from 'react';
-import {Attributes, buildId, createEditStatus, EditStatusConfig, ErrorMessage, getModelName as getModelName2, hideLoading, initForm, LoadingService, Locale, message, messageByHttpStatus, ResourceService, showLoading, UIService} from './core';
-import {build, createModel as createModel2, EditParameter, GenericService, handleStatus, handleVersion, initPropertyNullInModel} from './edit';
+import {Attributes, buildId, ErrorMessage, getModelName as getModelName2, hideLoading, initForm, LoadingService, Locale, message, messageByHttpStatus, ResourceService, showLoading, UIService} from './core';
+import {build, createModel as createModel2, EditParameter, GenericService, handleVersion, initPropertyNullInModel} from './edit';
 import {focusFirstError, readOnly as setReadOnly} from './formutil';
 import {DispatchWithCallback, useMergeState} from './merge';
 import {clone, makeDiff} from './reflect';
@@ -9,7 +9,7 @@ import {localeOf} from './state';
 import {useUpdate} from './update';
 // import {  confirm } from 'ui-alert';
 export interface BaseEditComponentParam<T, ID> {
-  status?: EditStatusConfig;
+  // status?: EditStatusConfig;
   backOnSuccess?: boolean;
   name?: string;
   metadata?: Attributes;
@@ -388,23 +388,21 @@ export const useCoreEdit = <T, ID, S, P>(
     const x: any = r;
     const successMsg = p1.resource.value('msg_save_success');
     const newMod = flag.newMode;
-    const st = createEditStatus(p ? p.status : undefined);
+    // const st = createEditStatus(p ? p.status : undefined);
     if (Array.isArray(x)) {
       fail(x);
     } else if (!isNaN(x)) {
-      if (x === st.success) {
+      if (x > 0) {
         succeed(successMsg, origin, version, backOnSave);
       } else {
-        if (newMod && x === st.duplicate_key) {
+        if (newMod && x <= 0) {
           handleDuplicateKey();
-        } else if (!newMod && x === st.not_found) {
+        } else if (!newMod && x === 0) {
           handleNotFound();
-        } else if (!newMod && x === st.version_error) {
+        } else {
           const title = p1.resource.value('error');
           const err = p1.resource.value('error_version');
           p1.showError(err, title);
-        } else {
-          handleStatus(x as number, st, p1.resource.value, p1.showError);
         }
       }
     } else {
