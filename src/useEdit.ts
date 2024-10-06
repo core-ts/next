@@ -432,7 +432,7 @@ export const useCoreEdit = <T, ID, S, P>(
         service.update(obj).then(result => postSave(result, obj, version, false, isBackO)).catch(handleError);
       }
     } else {
-      service.insert(obj).then(result => postSave(result, obj, version, false, isBackO)).catch(handleError);
+      service.create(obj).then(result => postSave(result, obj, version, false, isBackO)).catch(handleError);
     }
   };
 
@@ -518,3 +518,13 @@ export const useCoreEdit = <T, ID, S, P>(
     doSave
   };
 };
+export function isSuccessful<T>(x: number|T|ErrorMessage[]): boolean {
+  if (Array.isArray(x)) {
+    return false;
+  } else if (typeof x === 'object') {
+    return true;
+  } else if (typeof x === 'number' && x > 0) {
+    return true;
+  }
+  return false;
+}
